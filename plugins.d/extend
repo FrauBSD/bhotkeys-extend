@@ -1,0 +1,9 @@
+id extend
+group x11/bhotkeys-extend
+label Extend display
+chord Super+e
+chord Super+x xfce
+command display-extend --toggle
+desc Turn a second display on beside this one, or go back to one screen.
+repeat 0
+greeter 1

@@ -29,11 +29,7 @@
 
 pgm="${0##*/}" # Program basename
 
-case "$0" in
-*/*) here="${0%/*}" ;;
-*) here=$( command -v "$0" ) && here="${here%/*}" || here=. ;;
-esac
-. "$here/../libexec/bhotkeys/display-randr-common.subr"
+. "@PREFIX@/libexec/bhotkeys/display-randr-common.subr" || exit
 
 POSITION=
 QUIET=

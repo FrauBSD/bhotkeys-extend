@@ -1,10 +1,18 @@
-[//]: # ($FrauBSD: bhotkeys-extend/CHANGELOG.md 2026-10-03 20:59:30 -0700 Devin Teske $)
+[//]: # ($FrauBSD: bhotkeys-extend/CHANGELOG.md 2026-10-03 21:33:38 -0700 Devin Teske $)
 
 # Changelog
 
 Newest first. Each section is a git tag; the bullets are what landed
 in that tag (from the previous tag, or from the start of the
 repository for 1.0).
+
+## 1.5 (2026-10-03)
+
+- build the scripts from `.in` files; source the RandR subroutine
+  under `@PREFIX@` and exit if it cannot be read
+- `display_osd` shows the glyph it is given, with no default
+  hold of 5; an omitted hold adds no argument to `bosd`;
+  laptop-only passes `mirror-off`
 
 ## 1.4 (2026-10-03)
 

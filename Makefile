@@ -8,7 +8,7 @@
 #
 # $Title: bhotkeys-extend - Super+E (or Super+X) extend $
 # $Copyright: 2026 Devin Teske. All rights reserved. $
-# $FrauBSD: bhotkeys-extend/Makefile 2026-10-03 20:45:34 -0700 Devin Teske $
+# $FrauBSD: bhotkeys-extend/Makefile 2026-10-03 21:33:38 -0700 Devin Teske $
 #
 ############################################################ PATHS
 
@@ -23,12 +23,27 @@ PLUG=		plugins.d/extend
 
 ############################################################ TARGETS
 
+.PHONY: all
+
+all: ${BIN}
+
+.for script in ${BIN}
+${script}: ${script}.in Makefile
+	sed -e 's|@PREFIX@|${PREFIX}|g' ${script}.in > ${script}
+	chmod 755 ${script}
+.endfor
+
 .PHONY: install
 
-install:
+install: all
 	mkdir -p ${DESTDIR}${BINDIR} ${DESTDIR}${PLUGDIR}
 	install -m 755 ${BIN} ${DESTDIR}${BINDIR}
 	install -m 644 ${PLUG} ${DESTDIR}${PLUGDIR}/extend
+
+.PHONY: clean
+
+clean:
+	rm -f ${BIN}
 
 ################################################################################
 # END

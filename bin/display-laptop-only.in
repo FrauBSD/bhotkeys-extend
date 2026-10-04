@@ -26,11 +26,7 @@
 
 pgm="${0##*/}" # Program basename
 
-case "$0" in
-*/*) here="${0%/*}" ;;
-*) here=$( command -v "$0" ) && here="${here%/*}" || here=. ;;
-esac
-. "$here/../libexec/bhotkeys/display-randr-common.subr"
+. "@PREFIX@/libexec/bhotkeys/display-randr-common.subr" || exit
 
 MODE=force
 QUIET=
@@ -45,16 +41,11 @@ usage()
 
 display_osd()
 {
-	local name="$1" secs="${2:-5}"
-	local glyph=
+	local glyph="$1" secs="$2"
 
 	[ "$QUIET" ] && return 0
-	case "$name" in
-	laptop) glyph=mirror-off ;;
-	*) return 0
-	esac
 	have bosd || return 0
-	bosd "$glyph" "$secs" &
+	bosd "$glyph" $secs &
 }
 
 needs_recovery()
@@ -123,7 +114,7 @@ fi
 # for feedback, even when already laptop-only. Hotplug (--if-needed)
 # shows it when we actually recover (unless --quiet).
 #
-display_osd laptop 3
+display_osd mirror-off
 
 before=$( display_layout_fingerprint "$primary" )
 externals=$( display_list_all_externals "$primary" )

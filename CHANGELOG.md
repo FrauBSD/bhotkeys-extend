@@ -1,3 +1,5 @@
+[//]: # ($FrauBSD: bhotkeys-extend/CHANGELOG.md 2026-10-03 20:44:09 -0700 Devin Teske $)
+
 # Changelog
 
 Newest first. Each section is a git tag; the bullets are what landed
@@ -7,7 +9,6 @@ repository for 1.0).
 ## 1.1 (2026-10-03)
 
 - ship `display-extend` and `display-laptop-only`
-- ship `display-randr-common.subr` in `${PREFIX}/libexec/bhotkeys`
 
 ## 1.0 (2026-10-03)
 

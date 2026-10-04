@@ -3,15 +3,12 @@
 #
 PREFIX?=	/usr/local
 BINDIR?=	${PREFIX}/bin
-LIBEXECDIR?=	${PREFIX}/libexec/bhotkeys
 PLUGDIR?=	${PREFIX}/share/bhotkeys/plugins.d
 
 install:
 	mkdir -p ${DESTDIR}${BINDIR} ${DESTDIR}${LIBEXECDIR} ${DESTDIR}${PLUGDIR}
 	install -m 755 bin/display-extend bin/display-laptop-only \
 		${DESTDIR}${BINDIR}
-	install -m 644 libexec/bhotkeys/display-randr-common.subr \
-		${DESTDIR}${LIBEXECDIR}
 	install -m 644 plugins.d/extend \
 		${DESTDIR}${PLUGDIR}/extend
 

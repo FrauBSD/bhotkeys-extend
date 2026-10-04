@@ -1,14 +1,33 @@
 #!/bin/sh
-# Extend the internal panel to connected external output(s) (HDMI / DP / USB-C).
-# Transport-agnostic: any connected non-internal RandR output is used.
+############################################################ LICENSE
 #
-#   display-extend --right            external to the right of the laptop (default)
+# Copyright (c) 2026 Devin Teske <dteske@FreeBSD.org>
+#
+# SPDX-License-Identifier: BSD-2-Clause
+#
+############################################################ IDENT(1)
+#
+# $Title: Extend the laptop panel to external outputs $
+# $Copyright: 2026 Devin Teske. All rights reserved. $
+# $FrauBSD: bhotkeys-extend/bin/display-extend 2026-10-03 20:45:34 -0700 Devin Teske $
+#
+############################################################ INFORMATION
+#
+# Extend the internal panel to connected external outputs
+# (HDMI, DP, USB-C). Any connected non-internal RandR output
+# is used.
+#
+#   display-extend --right            external to the right (default)
 #   display-extend --left             external to the left
 #   display-extend --above            external above the laptop
 #   display-extend --off              laptop display only
-#   display-extend --toggle           extend right, or laptop-only if already extended
+#   display-extend --toggle           extend right, or laptop-only
+#                                     if already extended
 #   display-extend --right --quiet    apply without OSD (session restore)
-set -e
+#
+############################################################ GLOBALS
+
+pgm="${0##*/}" # Program basename
 
 case "$0" in
 */*) here="${0%/*}" ;;
@@ -19,123 +38,136 @@ esac
 POSITION=
 QUIET=
 TOGGLE=
-for _arg in "$@"; do
-	case "$_arg" in
-	--right)  POSITION=right ;;
-	--left)   POSITION=left ;;
-	--above)  POSITION=above ;;
-	--off)    exec "${0%/*}/display-laptop-only" ;;
-	--toggle) TOGGLE=1; POSITION=${POSITION:-right} ;;
-	--quiet)  QUIET=1 ;;
-	'') ;;
-	*)
-		echo "usage: display-extend --right|--left|--above|--off|--toggle [--quiet]" >&2
-		exit 2
-		;;
-	esac
-done
 
-if [ -z "$POSITION" ]; then
-	echo "usage: display-extend --right|--left|--above|--off|--toggle [--quiet]" >&2
+############################################################ FUNCTIONS
+
+usage()
+{
+	echo "Usage: $pgm --right|--left|--above|--off|--toggle [--quiet]" >&2
 	exit 2
-fi
-
-# Super+E arrives as a Mod4 chord; suppress Start menu on Super release.
-if [ -z "$QUIET" ] && [ -x "/usr/local/bin/super-menu-handler" ]; then
-	"/usr/local/bin/super-menu-handler" chord
-fi
-
-extend_osd() {
-	[ -n "$QUIET" ] && return 0
-	if [ -x "/usr/local/bin/display-mirror-osd" ]; then
-		"/usr/local/bin/display-mirror-osd" "$1" "${2:-5}" &
-	fi
 }
 
-extend_on() {
-	_primary=$1
-	_externals=$2
-	_pos=$3
+extend_osd()
+{
+	local name="$1" secs="${2:-5}"
+	local glyph=
 
-	_cmd="$XRANDR"
+	[ "$QUIET" ] && return 0
+	case "$name" in
+	extend) glyph=mirror-extend ;;
+	extend-none) glyph=mirror-extend-none ;;
+	*) return 0
+	esac
+	have bosd || return 0
+	bosd "$glyph" "$secs" &
+}
 
-	case "$_pos" in
+extend_on()
+{
+	local primary="$1" externals="$2" pos="$3"
+	local cmd="$XRANDR" prev= out= first=
+
+	case "$pos" in
 	right)
-		_cmd="$_cmd --output $_primary --primary --auto --pos 0x0"
-		_prev="$_primary"
-		for _out in $_externals; do
-			_cmd="$_cmd --output $_out --auto --right-of $_prev"
-			_prev="$_out"
+		cmd="$cmd --output $primary --primary --auto --pos 0x0"
+		prev="$primary"
+		for out in $externals; do
+			cmd="$cmd --output $out --auto --right-of $prev"
+			prev="$out"
 		done
 		;;
 	left)
-		_prev=
-		for _out in $_externals; do
-			if [ -z "$_prev" ]; then
-				_cmd="$_cmd --output $_out --auto --pos 0x0"
+		for out in $externals; do
+			if [ ! "$prev" ]; then
+				cmd="$cmd --output $out --auto --pos 0x0"
 			else
-				_cmd="$_cmd --output $_out --auto --right-of $_prev"
+				cmd="$cmd --output $out --auto --right-of $prev"
 			fi
-			_prev="$_out"
+			prev="$out"
 		done
-		_cmd="$_cmd --output $_primary --primary --auto --right-of $_prev"
+		cmd="$cmd --output $primary --primary --auto --right-of $prev"
 		;;
 	above)
-		_first=
-		for _out in $_externals; do
-			if [ -z "$_first" ]; then
-				_first="$_out"
-				_cmd="$_cmd --output $_out --auto --pos 0x0"
-				_prev="$_out"
+		for out in $externals; do
+			if [ ! "$first" ]; then
+				first="$out"
+				cmd="$cmd --output $out --auto --pos 0x0"
+				prev="$out"
 			else
-				_cmd="$_cmd --output $_out --auto --right-of $_prev"
-				_prev="$_out"
+				cmd="$cmd --output $out --auto --right-of $prev"
+				prev="$out"
 			fi
 		done
-		_cmd="$_cmd --output $_primary --primary --auto --below $_first"
+		cmd="$cmd --output $primary --primary --auto --below $first"
 		;;
 	esac
 
-	display_log "EXTEND $_pos: $_cmd"
-	# shellcheck disable=SC2086
-	display_xrandr_apply $_cmd
-	mkdir -p "$(dirname "$STATE_EXTEND")"
-	printf '%s\n' "$_pos" > "$STATE_EXTEND"
+	display_log "EXTEND $pos: $cmd"
+	display_xrandr_apply $cmd
+	mkdir -p "${STATE_EXTEND%/*}"
+	printf '%s\n' "$pos" > "$STATE_EXTEND"
 	display_clear_mirror
-	display_mode_set "extend:${_pos}"
+	display_mode_set "extend:${pos}"
 	display_fvwm_refresh --if-needed
 }
+
+############################################################ MAIN
+
+set -e
+
+for arg in "$@"; do
+	case "$arg" in
+	--right) POSITION=right ;;
+	--left) POSITION=left ;;
+	--above) POSITION=above ;;
+	--off) exec "${0%/*}/display-laptop-only" ;;
+	--toggle) TOGGLE=1; POSITION="${POSITION:-right}" ;;
+	--quiet) QUIET=1 ;;
+	'') : ok ;;
+	*) usage
+	esac
+done
+
+[ "$POSITION" ] || usage
+
+# Super+E arrives as a Mod4 chord; suppress Start menu on Super release
+[ ! "$QUIET" ] && [ -x /usr/local/bin/bvwm-super-menu-handler ] &&
+	/usr/local/bin/bvwm-super-menu-handler chord
 
 display_xrandr_cache || {
 	display_log "display-extend: xrandr --query failed"
 	exit 1
 }
 
-_primary=$(display_pick_primary)
-if [ -z "$_primary" ]; then
+primary=$( display_pick_primary )
+if [ ! "$primary" ]; then
 	display_log "display-extend: no internal output"
 	exit 1
 fi
 
-# Super+E toggle: leave extend → single-display OSD + laptop-only.
-if [ -n "$TOGGLE" ] && display_is_extended "$_primary"; then
-	display_log "display-extend --toggle: already extended — laptop-only"
-	if [ -n "$QUIET" ]; then
+# Super+E toggle: leave extend for single-display OSD and laptop-only
+if [ "$TOGGLE" ] && display_is_extended "$primary"; then
+	display_log "display-extend --toggle: already extended; laptop-only"
+	if [ "$QUIET" ]; then
 		exec "${0%/*}/display-laptop-only" --quiet
 	fi
 	exec "${0%/*}/display-laptop-only"
 fi
 
-_externals=$(display_sort_externals "$(display_list_externals "$_primary")")
-if [ -z "$_externals" ]; then
-	display_log "display-extend: no external outputs connected (primary=$_primary)"
-	# Red extend glyph — stay laptop-only, do not touch xrandr.
+externals=$( display_sort_externals "$( display_list_externals "$primary" )" )
+if [ ! "$externals" ]; then
+	display_log "display-extend: no external outputs connected (primary=$primary)"
+	# Red extend glyph; stay laptop-only, do not touch xrandr
 	extend_osd extend-none 3
 	exit 0
 fi
 
-extend_osd extend 5
-extend_on "$_primary" "$_externals" "$POSITION"
-display_log "display-extend enabled $POSITION: $_primary + $_externals"
+extend_osd extend
+extend_on "$primary" "$externals" "$POSITION"
+display_log "display-extend enabled $POSITION: $primary + $externals"
 
 exit 0
+
+################################################################################
+# END
+################################################################################

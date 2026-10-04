@@ -9,7 +9,7 @@
 #
 # $Title: Extend the laptop panel to external outputs $
 # $Copyright: 2026 Devin Teske. All rights reserved. $
-# $FrauBSD: bhotkeys-extend/bin/display-extend 2026-10-03 20:45:34 -0700 Devin Teske $
+# $FrauBSD: bhotkeys-extend/bin/display-extend 2026-10-03 20:55:04 -0700 Devin Teske $
 #
 ############################################################ INFORMATION
 #
@@ -129,10 +129,6 @@ for arg in "$@"; do
 done
 
 [ "$POSITION" ] || usage
-
-# Super+E arrives as a Mod4 chord; suppress Start menu on Super release
-[ ! "$QUIET" ] && [ -x /usr/local/bin/bvwm-super-menu-handler ] &&
-	/usr/local/bin/bvwm-super-menu-handler chord
 
 display_xrandr_cache || {
 	display_log "display-extend: xrandr --query failed"

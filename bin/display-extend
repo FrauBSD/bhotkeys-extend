@@ -9,7 +9,7 @@
 #
 # $Title: Extend the laptop panel to external outputs $
 # $Copyright: 2026 Devin Teske. All rights reserved. $
-# $FrauBSD: bhotkeys-extend/bin/display-extend 2026-10-03 20:55:04 -0700 Devin Teske $
+# $FrauBSD: bhotkeys-extend/bin/display-extend 2026-10-03 20:58:44 -0700 Devin Teske $
 #
 ############################################################ INFORMATION
 #
@@ -152,7 +152,8 @@ fi
 
 externals=$( display_sort_externals "$( display_list_externals "$primary" )" )
 if [ ! "$externals" ]; then
-	display_log "display-extend: no external outputs connected (primary=$primary)"
+	display_log "display-extend: no external outputs connected" \
+		"(primary=$primary)"
 	# Red extend glyph; stay laptop-only, do not touch xrandr
 	extend_osd extend-none 3
 	exit 0

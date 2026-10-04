@@ -1,4 +1,4 @@
-[//]: # ($FrauBSD: bhotkeys-extend/CHANGELOG.md 2026-10-03 20:56:28 -0700 Devin Teske $)
+[//]: # ($FrauBSD: bhotkeys-extend/CHANGELOG.md 2026-10-03 20:59:30 -0700 Devin Teske $)
 
 # Changelog
 
@@ -10,6 +10,7 @@ repository for 1.0).
 
 - drop the `bvwm-super-menu-handler` call from `display-extend`;
   `bhotkeys` marks the Super chord
+- Wrap long lines in display-extend
 
 ## 1.3 (2026-10-03)
 

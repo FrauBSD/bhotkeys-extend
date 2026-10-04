@@ -1,8 +1,8 @@
-[//]: # ($FrauBSD: bhotkeys-extend/README.md 2026-10-03 20:44:09 -0700 Devin Teske $)
+[//]: # ($FrauBSD: bhotkeys-extend/README.md 2026-10-03 20:54:09 -0700 Devin Teske $)
 
 # bhotkeys-extend
 
-`Super+E` (or `Super+X`) turns a second display on beside the first, or back off.
+`Super+E` (or `Super+X` under Xfce) turns a second display on beside the first, or back off.
 
 One [bhotkeys](https://github.com/FrauBSD/bhotkeys) plugin. This
 package ships `display-extend` and `display-laptop-only`.

@@ -1,10 +1,19 @@
-[//]: # ($FrauBSD: bhotkeys-extend/CHANGELOG.md 2026-10-03 20:44:09 -0700 Devin Teske $)
+[//]: # ($FrauBSD: bhotkeys-extend/CHANGELOG.md 2026-10-03 20:54:32 -0700 Devin Teske $)
 
 # Changelog
 
 Newest first. Each section is a git tag; the bullets are what landed
 in that tag (from the previous tag, or from the start of the
 repository for 1.0).
+
+## 1.3 (2026-10-03)
+
+- format the Makefile and shell scripts
+- show extend and laptop glyphs with `bosd`
+
+## 1.2 (2026-10-03)
+
+- take the RandR subroutine from `bhotkeys-display-common`
 
 ## 1.1 (2026-10-03)
 

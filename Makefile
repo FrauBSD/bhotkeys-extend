@@ -8,24 +8,26 @@
 #
 # $Title: bhotkeys-extend - Super+E (or Super+X) extend $
 # $Copyright: 2026 Devin Teske. All rights reserved. $
-# $FrauBSD: bhotkeys-extend/Makefile 2026-10-03 21:33:38 -0700 Devin Teske $
+# $FrauBSD: bhotkeys-extend/Makefile 2026-10-04 22:57:47 -0700 Devin Teske $
 #
 ############################################################ PATHS
 
 PREFIX?=	/usr/local
 BINDIR?=	${PREFIX}/bin
 PLUGDIR?=	${PREFIX}/share/bhotkeys/plugins.d
+MANDIR?=	${PREFIX}/share/man/man1
 
 ############################################################ FILES
 
 BIN=		bin/display-extend bin/display-laptop-only
 PLUG=		plugins.d/extend
+MAN1=		display-extend display-laptop-only
 
 ############################################################ TARGETS
 
 .PHONY: all
 
-all: ${BIN}
+all: ${BIN} man/display-extend.1 man/display-laptop-only.1
 
 .for script in ${BIN}
 ${script}: ${script}.in Makefile
@@ -33,17 +35,27 @@ ${script}: ${script}.in Makefile
 	chmod 755 ${script}
 .endfor
 
+.for m in ${MAN1}
+man/${m}.1: man/${m}.1.in Makefile
+	sed -e 's|@PREFIX@|${PREFIX}|g' man/${m}.1.in > man/${m}.1
+.endfor
+
 .PHONY: install
 
 install: all
-	mkdir -p ${DESTDIR}${BINDIR} ${DESTDIR}${PLUGDIR}
+	mkdir -p ${DESTDIR}${BINDIR} ${DESTDIR}${PLUGDIR} \
+	    ${DESTDIR}${MANDIR}
 	install -m 755 ${BIN} ${DESTDIR}${BINDIR}
 	install -m 644 ${PLUG} ${DESTDIR}${PLUGDIR}/extend
+.for m in ${MAN1}
+	gzip -cn man/${m}.1 > ${DESTDIR}${MANDIR}/${m}.1.gz
+	chmod 444 ${DESTDIR}${MANDIR}/${m}.1.gz
+.endfor
 
 .PHONY: clean
 
 clean:
-	rm -f ${BIN}
+	rm -f ${BIN} man/display-extend.1 man/display-laptop-only.1
 
 ################################################################################
 # END

@@ -1,0 +1,74 @@
+.\" Copyright (c) 2026 Devin Teske <dteske@FreeBSD.org>
+.\"
+.\" SPDX-License-Identifier: BSD-2-Clause
+.\"
+.Dd October 4, 2026
+.Dt DISPLAY-EXTEND 1
+.Os
+.Sh NAME
+.Nm display-extend
+.Nd extend the laptop panel to external outputs
+.Sh SYNOPSIS
+.Nm Fl Fl right
+.Op Fl Fl quiet
+.Nm Fl Fl left
+.Op Fl Fl quiet
+.Nm Fl Fl above
+.Op Fl Fl quiet
+.Nm Fl Fl off
+.Nm Fl Fl toggle
+.Op Fl Fl quiet
+.Sh DESCRIPTION
+.Nm
+places every connected external RandR output beside the internal
+panel.
+.Fl Fl right
+puts them to the right, each further right than the last.
+.Fl Fl left
+puts them to the left and the panel to their right.
+.Fl Fl above
+puts them above the panel.
+One of those three,
+.Fl Fl off ,
+or
+.Fl Fl toggle
+is required.
+.Pp
+.Fl Fl off
+runs
+.Xr display-laptop-only 1 .
+.Fl Fl toggle
+extends to the right, or runs
+.Xr display-laptop-only 1
+when the panel is already extended.
+.Fl Fl quiet
+is passed on in that case.
+.Pp
+With no external output connected, the extend-none glyph is shown
+and the layout is left alone.
+.Fl Fl quiet
+skips the glyph.
+The glyph is
+.Xr bosd 1
+.Cm mirror-extend
+while extending, and
+.Cm mirror-extend-none
+when there is nothing to extend to.
+.Pp
+The shared RandR helpers are
+.Pa @PREFIX@/libexec/bhotkeys/display-randr-common.subr .
+.Sh EXIT STATUS
+.Nm
+exits 0 when the layout is applied or when no external output is
+connected.
+It exits 1 when
+.Xr xrandr 1
+fails or no internal output is found.
+A bad argument exits 2.
+.Sh SEE ALSO
+.Xr bhotkeys 1 ,
+.Xr bosd 1 ,
+.Xr display-laptop-only 1 ,
+.Xr xrandr 1
+.Sh AUTHORS
+.An Devin Teske Aq Mt dteske@FreeBSD.org

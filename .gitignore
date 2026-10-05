@@ -1,2 +1,4 @@
 bin/display-extend
 bin/display-laptop-only
+man/display-extend.1
+man/display-laptop-only.1

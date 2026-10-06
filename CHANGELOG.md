@@ -1,10 +1,14 @@
-[//]: # ($FrauBSD: bhotkeys-extend/CHANGELOG.md 2026-10-04 22:57:47 -0700 Devin Teske $)
+[//]: # ($FrauBSD: bhotkeys-extend/CHANGELOG.md 2026-10-05 21:36:51 -0700 Devin Teske $)
 
 # Changelog
 
 Newest first. Each section is a git tag; the bullets are what landed
 in that tag (from the previous tag, or from the start of the
 repository for 1.0).
+
+## 1.7 (2026-10-05)
+
+- `display-laptop-only` moves to `bhotkeys-display-common`
 
 ## 1.6 (2026-10-04)
 

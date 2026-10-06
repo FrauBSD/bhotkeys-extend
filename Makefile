@@ -8,7 +8,7 @@
 #
 # $Title: bhotkeys-extend - Super+E (or Super+X) extend $
 # $Copyright: 2026 Devin Teske. All rights reserved. $
-# $FrauBSD: bhotkeys-extend/Makefile 2026-10-04 22:57:47 -0700 Devin Teske $
+# $FrauBSD: bhotkeys-extend/Makefile 2026-10-05 21:36:51 -0700 Devin Teske $
 #
 ############################################################ PATHS
 
@@ -19,15 +19,15 @@ MANDIR?=	${PREFIX}/share/man/man1
 
 ############################################################ FILES
 
-BIN=		bin/display-extend bin/display-laptop-only
+BIN=		bin/display-extend
 PLUG=		plugins.d/extend
-MAN1=		display-extend display-laptop-only
+MAN1=		display-extend
 
 ############################################################ TARGETS
 
 .PHONY: all
 
-all: ${BIN} man/display-extend.1 man/display-laptop-only.1
+all: ${BIN} man/display-extend.1
 
 .for script in ${BIN}
 ${script}: ${script}.in Makefile
@@ -55,7 +55,7 @@ install: all
 .PHONY: clean
 
 clean:
-	rm -f ${BIN} man/display-extend.1 man/display-laptop-only.1
+	rm -f ${BIN} man/display-extend.1
 
 ################################################################################
 # END
